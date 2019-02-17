@@ -52,13 +52,26 @@ class Figure(Float):
         str
             The basename with which the plot has been saved.
         """
+
         import matplotlib.pyplot as plt
+        return self._save_figure(plt.gcf(), *args, extension=extension, **kwargs)
+
+    def _save_figure(self, figure, *args, extension='pdf', **kwargs):
+        """Save the figure.
+
+        Returns
+        -------
+        str
+            The basename with which the plot has been saved.
+        """
+
 
         tmp_path = make_temp_dir()
         filename = '{}.{}'.format(str(uuid.uuid4()), extension.strip('.'))
         filepath = posixpath.join(tmp_path, filename)
 
-        plt.savefig(filepath, *args, **kwargs)
+        figure.savefig(filepath, *args, **kwargs)
+        figure.canvas.draw_idle()  # need this if 'transparent=True' to reset colors
         return filepath
 
     def add_plot(self, *args, extension='pdf', **kwargs):
@@ -87,6 +100,35 @@ class Figure(Float):
                 add_image_kwargs[key] = kwargs.pop(key)
 
         filename = self._save_plot(*args, extension=extension, **kwargs)
+
+        self.add_image(filename, **add_image_kwargs)
+
+    def add_figure(self, figure, *args, extension='pdf', **kwargs):
+        """Add the Matplotlib Figure to this pylatex figure.
+
+
+                Args
+                ----
+                figure: matplotlib.pyplot.figure.Figure
+                    The matplotlib figure to add.
+                args:
+                    Arguments passed to savefig for displaying the plot.
+                extension : str
+                    extension of image file indicating figure file type
+                kwargs:
+                    Keyword arguments passed to plt.savefig for displaying the plot. In
+                    case these contain ``width`` or ``placement``, they will be used
+                    for the same purpose as in the add_image command. Namely the width
+                    and placement of the generated plot in the LaTeX document.
+                """
+
+        add_image_kwargs = {}
+
+        for key in ('width', 'placement'):
+            if key in kwargs:
+                add_image_kwargs[key] = kwargs.pop(key)
+
+        filename = self._save_figure(figure, *args, extension=extension, **kwargs)
 
         self.add_image(filename, **add_image_kwargs)
 
