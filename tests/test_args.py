@@ -176,6 +176,19 @@ def test_graphics():
     plot.add_caption(caption='I am a caption.')
     repr(plot)
 
+    oo_plot = Figure(data=None, position=None)
+
+    fig, ax = pyplot.subplots()
+    ax.plot(x, y)
+
+    oo_plot.add_figure(
+        fig,
+        width=r'0.8\textwidth',
+        placement=r'\centering',
+        extension='pdf'
+    )
+    repr(oo_plot)
+
     # StandAloneGraphic
     stand_alone_graphic = StandAloneGraphic(
         filename='', image_options=r"width=0.8\textwidth")

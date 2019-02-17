@@ -92,35 +92,27 @@ class Figure(Float):
             for the same purpose as in the add_image command. Namely the width
             and placement of the generated plot in the LaTeX document.
         """
+        import matplotlib.pyplot as plt
 
-        add_image_kwargs = {}
-
-        for key in ('width', 'placement'):
-            if key in kwargs:
-                add_image_kwargs[key] = kwargs.pop(key)
-
-        filename = self._save_plot(*args, extension=extension, **kwargs)
-
-        self.add_image(filename, **add_image_kwargs)
+        return self.add_figure(plt.gcf(), *args, extension=extension, **kwargs)
 
     def add_figure(self, figure, *args, extension='pdf', **kwargs):
         """Add the Matplotlib Figure to this pylatex figure.
 
-
-                Args
-                ----
-                figure: matplotlib.pyplot.figure.Figure
-                    The matplotlib figure to add.
-                args:
-                    Arguments passed to savefig for displaying the plot.
-                extension : str
-                    extension of image file indicating figure file type
-                kwargs:
-                    Keyword arguments passed to plt.savefig for displaying the plot. In
-                    case these contain ``width`` or ``placement``, they will be used
-                    for the same purpose as in the add_image command. Namely the width
-                    and placement of the generated plot in the LaTeX document.
-                """
+        Args
+        ----
+        figure: matplotlib.pyplot.figure.Figure
+            The matplotlib figure to add.
+        args:
+            Arguments passed to savefig for displaying the plot.
+        extension : str
+            extension of image file indicating figure file type
+        kwargs:
+            Keyword arguments passed to figure.savefig for displaying the plot.
+            In case these contain ``width`` or ``placement``, they will be used
+            for the same purpose as in the add_image command. Namely the width
+            and placement of the generated plot in the LaTeX document.
+        """
 
         add_image_kwargs = {}
 
@@ -128,7 +120,9 @@ class Figure(Float):
             if key in kwargs:
                 add_image_kwargs[key] = kwargs.pop(key)
 
-        filename = self._save_figure(figure, *args, extension=extension, **kwargs)
+        filename = self._save_figure(
+            figure, *args, extension=extension, **kwargs
+        )
 
         self.add_image(filename, **add_image_kwargs)
 

@@ -15,7 +15,7 @@ matplotlib.use('Agg')  # Not to use X server. For TravisCI.
 import matplotlib.pyplot as plt  # noqa
 
 
-def main(fname, width, *args, **kwargs):
+def main(fname, width, *args, figure=None, **kwargs):
     geometry_options = {"right": "2cm", "left": "2cm"}
     doc = Document(fname, geometry_options=geometry_options)
 
@@ -25,7 +25,10 @@ def main(fname, width, *args, **kwargs):
         doc.append('Take a look at this beautiful plot:')
 
         with doc.create(Figure(position='htbp')) as plot:
-            plot.add_plot(width=NoEscape(width), *args, **kwargs)
+            if figure is None:
+                plot.add_plot(width=NoEscape(width), *args, **kwargs)
+            else:
+                plot.add_figure(figure, width=NoEscape(width), *args, **kwargs)
             plot.add_caption('I am a caption.')
 
         doc.append('Created using matplotlib.')
@@ -43,3 +46,4 @@ if __name__ == '__main__':
 
     main('matplotlib_ex-dpi', r'1\textwidth', dpi=300)
     main('matplotlib_ex-facecolor', r'0.5\textwidth', facecolor='b')
+    main('matplotlib_ex-oo', r'1\textwidth', figure=plt.gcf())
